@@ -1,33 +1,42 @@
-package ru.yandex.practicum.moviessearch.ui.cast
+package ru.yandex.practicum.moviessearch.presentation.cast
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import ru.yandex.practicum.moviessearch.databinding.ActivityMoviesCastBinding
-import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastState
-import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastViewModel
+import ru.yandex.practicum.moviessearch.databinding.FragmentMoviesCastBinding
+import ru.yandex.practicum.moviessearch.ui.cast.movieCastHeaderDelegate
+import ru.yandex.practicum.moviessearch.ui.cast.movieCastPersonDelegate
 
-class MoviesCastActivity : AppCompatActivity() {
+class MoviesCastFragment : Fragment() {
 
     companion object {
 
+        const val TAG = "DetailsFragment"
         private const val ARGS_MOVIE_ID = "movie_id"
 
-        fun newInstance(context: Context, movieId: String): Intent {
-            return Intent(context, MoviesCastActivity::class.java).apply {
-                putExtra(ARGS_MOVIE_ID, movieId)
+        // Модифицировали метод newInstance — он должен возвращать фрагмент,
+        // а не Intent
+        fun newInstance(movieId: String): Fragment {
+            return MoviesCastFragment().apply {
+                arguments = bundleOf(
+                    ARGS_MOVIE_ID to movieId
+                )
             }
         }
+
     }
 
     private val moviesCastViewModel: MoviesCastViewModel by viewModel {
-        parametersOf(intent.getStringExtra(ARGS_MOVIE_ID))
+        // параметр movieId берём из аргументов фрагмента, а не Intent
+        parametersOf(requireArguments().getString(ARGS_MOVIE_ID))
     }
 
     private val adapter = ListDelegationAdapter(
@@ -35,18 +44,20 @@ class MoviesCastActivity : AppCompatActivity() {
         movieCastPersonDelegate(),
     )
 
-    private lateinit var binding: ActivityMoviesCastBinding
+    private lateinit var binding: FragmentMoviesCastBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMoviesCastBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityMoviesCastBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.moviesCastRecyclerView.adapter = adapter
-        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        moviesCastViewModel.observeState().observe(this) {
+        moviesCastViewModel.observeState().observe(viewLifecycleOwner) {
             when (it) {
                 is MoviesCastState.Content -> showContent(it)
                 is MoviesCastState.Error -> showError(it)
