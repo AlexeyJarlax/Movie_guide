@@ -24,7 +24,6 @@ class MoviesCastActivity : AppCompatActivity() {
                 putExtra(ARGS_MOVIE_ID, movieId)
             }
         }
-
     }
 
     private val moviesCastViewModel: MoviesCastViewModel by viewModel {

@@ -14,16 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoviesSearch"
         tools:targetApi="31" >
-        <activity android:name="ru.yandex.practicum.moviessearch.ui.movies.MoviesActivity"
+        <!-- Добавили RootActivity и сделали её главной -->
+        <activity android:name="ru.yandex.practicum.moviessearch.ui.root.RootActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name="ru.yandex.practicum.moviessearch.ui.details.DetailsActivity"
-            android:exported="true">
         </activity>
         <activity android:name="ru.yandex.practicum.moviessearch.ui.cast.MoviesCastActivity"
             android:exported="true">
