@@ -1,4 +1,4 @@
-package ru.yandex.practicum.moviessearch.presentation.cast
+package ru.yandex.practicum.moviessearch.ui.cast
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,8 +12,8 @@ import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.yandex.practicum.moviessearch.databinding.FragmentMoviesCastBinding
-import ru.yandex.practicum.moviessearch.ui.cast.movieCastHeaderDelegate
-import ru.yandex.practicum.moviessearch.ui.cast.movieCastPersonDelegate
+import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastState
+import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastViewModel
 
 class MoviesCastFragment : Fragment() {
 
@@ -22,16 +22,8 @@ class MoviesCastFragment : Fragment() {
         const val TAG = "DetailsFragment"
         private const val ARGS_MOVIE_ID = "movie_id"
 
-        // Модифицировали метод newInstance — он должен возвращать фрагмент,
-        // а не Intent
-        fun newInstance(movieId: String): Fragment {
-            return MoviesCastFragment().apply {
-                arguments = bundleOf(
-                    ARGS_MOVIE_ID to movieId
-                )
-            }
-        }
-
+        fun createArgs(movieId: String): Bundle =
+            bundleOf(ARGS_MOVIE_ID to movieId)
     }
 
     private val moviesCastViewModel: MoviesCastViewModel by viewModel {
