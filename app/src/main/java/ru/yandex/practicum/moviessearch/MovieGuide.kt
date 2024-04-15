@@ -8,12 +8,12 @@ import ru.yandex.practicum.moviessearch.di.interactorModule
 import ru.yandex.practicum.moviessearch.di.repositoryModule
 import ru.yandex.practicum.moviessearch.di.viewModelModule
 
-class MoviesApplication : Application() {
+class MovieGuide : Application() {
 
     override fun onCreate() {
         super.onCreate()
         GlobalContext.startKoin {
-            androidContext(this@MoviesApplication)
+            androidContext(this@MovieGuide)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
     }

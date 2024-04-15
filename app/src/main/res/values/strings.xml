@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Movies Search</string>
+    <string name="app_name">Movie guide</string>
 
     <string name="search">Найти</string>
     <string name="nothing_found">Ничего не найдено</string>
@@ -16,4 +16,6 @@
     <string name="cast">В ролях:</string>
     <string name="plot">Сюжет:</string>
     <string name="request">Введите запрос...</string>
+    <string name="version">Разработчик\nвообще\nкрасавчик</string>
+
 </resources>

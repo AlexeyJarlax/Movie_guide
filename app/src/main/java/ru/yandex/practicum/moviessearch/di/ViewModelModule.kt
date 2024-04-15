@@ -7,6 +7,7 @@ import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastViewModel
 import ru.yandex.practicum.moviessearch.presentation.details.AboutViewModel
 import ru.yandex.practicum.moviessearch.presentation.details.PosterViewModel
 import ru.yandex.practicum.moviessearch.presentation.movies.MoviesViewModel
+import ru.yandex.practicum.moviessearch.presentation.names.NamesViewModel
 
 val viewModelModule = module {
 
@@ -26,4 +27,7 @@ val viewModelModule = module {
         MoviesCastViewModel(movieId, get())
     }
 
+    viewModel {
+        NamesViewModel(androidContext(), get())
+    }
 }

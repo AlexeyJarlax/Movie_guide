@@ -7,6 +7,7 @@ import ru.yandex.practicum.moviessearch.data.NetworkClient
 import ru.yandex.practicum.moviessearch.data.dto.MovieCastRequest
 import ru.yandex.practicum.moviessearch.data.dto.MovieDetailsRequest
 import ru.yandex.practicum.moviessearch.data.dto.MoviesSearchRequest
+import ru.yandex.practicum.moviessearch.data.dto.NamesSearchRequest
 import ru.yandex.practicum.moviessearch.data.dto.Response
 
 class RetrofitNetworkClient(
@@ -25,6 +26,7 @@ class RetrofitNetworkClient(
 
         // Добавили в выражение when ещё одну ветку
         val response = when (dto) {
+            is NamesSearchRequest -> imdbService.searchNames(dto.expression).execute()
             is MoviesSearchRequest -> imdbService.searchMovies(dto.expression).execute()
             is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId).execute()
             else -> imdbService.getFullCast((dto as MovieCastRequest).movieId).execute()
