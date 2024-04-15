@@ -20,18 +20,10 @@ class DetailsFragment : Fragment() {
         private const val ARGS_MOVIE_ID = "movie_id"
         private const val ARGS_POSTER_URL = "poster_url"
 
-        // Тег для использования во FragmentManager
-        const val TAG = "DetailsFragment"
+        fun createArgs(movieId: String, posterUrl: String): Bundle =
+            bundleOf(ARGS_MOVIE_ID to movieId,
+                ARGS_POSTER_URL to posterUrl)
 
-        fun newInstance(movieId: String, posterUrl: String): Fragment {
-            return DetailsFragment().apply {
-                // Пробрасываем аргументы в Bundle
-                arguments = bundleOf(
-                    ARGS_MOVIE_ID to movieId,
-                    ARGS_POSTER_URL to posterUrl
-                )
-            }
-        }
     }
 
     override fun onCreateView(

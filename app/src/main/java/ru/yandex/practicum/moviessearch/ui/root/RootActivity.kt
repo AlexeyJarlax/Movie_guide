@@ -14,16 +14,8 @@ class RootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Привязываем вёрстку к экрану
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (savedInstanceState == null) {
-            // Добавляем фрагмент в контейнер
-            supportFragmentManager.commit {
-                this.add(R.id.rootFragmentContainerView, MoviesFragment())
-            }
-        }
     }
 
 }

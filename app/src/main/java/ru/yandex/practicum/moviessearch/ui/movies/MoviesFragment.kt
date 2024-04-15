@@ -17,6 +17,8 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.commit
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.yandex.practicum.moviessearch.R
@@ -26,47 +28,30 @@ import ru.yandex.practicum.moviessearch.presentation.movies.MoviesState
 import ru.yandex.practicum.moviessearch.presentation.movies.MoviesViewModel
 import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
 
-class MoviesFragment : Fragment() {
+    class MoviesFragment : Fragment() {
 
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
+        companion object {
+            private const val CLICK_DEBOUNCE_DELAY = 1000L
+        }
 
-    private val viewModel by viewModel<MoviesViewModel>()
+        private val viewModel by viewModel<MoviesViewModel>()
 
-    private val adapter = MoviesAdapter { movie ->
-        if (clickDebounce()) {
 
-            // Навигируемся на следующий экран
-            parentFragmentManager.commit {
-                replace(
-                    // Указали, в каком контейнере работаем
-                    R.id.rootFragmentContainerView,
-                    // Создали фрагмент
-                    DetailsFragment.newInstance(
-                        movieId = movie.id,
-                        posterUrl = movie.image
-                    ),
-                    // Указали тег фрагмента
-                    DetailsFragment.TAG
-                )
+        private val adapter = MoviesAdapter { movie ->
+            if (clickDebounce()) {
+                findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment,
+                    DetailsFragment.createArgs(movie.id, movie.image))
 
-                // Добавляем фрагмент в Back Stack
-                addToBackStack(DetailsFragment.TAG)
             }
         }
-    }
 
     private val handler = Handler(Looper.getMainLooper())
-
     private lateinit var binding: FragmentMoviesBinding
-
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
     private lateinit var moviesList: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var textWatcher: TextWatcher
-
     private var isClickAllowed = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

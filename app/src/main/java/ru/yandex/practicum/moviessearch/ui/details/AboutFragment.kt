@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.yandex.practicum.moviessearch.R
 import ru.yandex.practicum.moviessearch.databinding.FragmentAboutBinding
 import ru.yandex.practicum.moviessearch.domain.models.MovieDetails
-import ru.yandex.practicum.moviessearch.presentation.cast.MoviesCastFragment
+import ru.yandex.practicum.moviessearch.ui.cast.MoviesCastFragment
 import ru.yandex.practicum.moviessearch.presentation.details.AboutState
 import ru.yandex.practicum.moviessearch.presentation.details.AboutViewModel
 
@@ -50,17 +51,8 @@ class AboutFragment : Fragment() {
             }
         }
         binding.showCastButton.setOnClickListener {
-            // Осуществляем навигацию
-            parentFragment?.parentFragmentManager?.commit {
-                replace(
-                    R.id.rootFragmentContainerView,
-                    MoviesCastFragment.newInstance(
-                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
-                    ),
-                    MoviesCastFragment.TAG
-                )
-                addToBackStack(MoviesCastFragment.TAG)
-            }
+            findNavController().navigate(R.id.action_detailsFragment_to_moviesCastFragment,
+                MoviesCastFragment.createArgs(requireArguments().getString(MOVIE_ID).orEmpty()))
         }
     }
 
