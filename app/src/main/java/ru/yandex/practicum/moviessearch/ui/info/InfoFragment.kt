@@ -24,7 +24,7 @@ class InfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val versionName = getVersionName()
-        binding.versionTextView.text = versionName
+        binding.versionTextView.text = "v. ${versionName}"
     }
 
     // Метод для получения версии приложения

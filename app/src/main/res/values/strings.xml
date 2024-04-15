@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Movies Search</string>
+    <string name="app_name">Movie guide</string>
 
     <string name="search">Найти</string>
     <string name="nothing_found">Ничего не найдено</string>

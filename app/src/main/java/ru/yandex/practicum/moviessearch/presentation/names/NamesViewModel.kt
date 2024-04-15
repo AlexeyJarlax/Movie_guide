@@ -90,7 +90,6 @@ class NamesViewModel(private val context: Context,
                             )
                         }
                     }
-
                 }
             })
         }

@@ -14,7 +14,7 @@
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="32sp"
-        android:text="IMDB Movies Search"
+        android:text="@string/app_name"
         android:textAlignment="center"/>
 
     <TextView
@@ -25,7 +25,7 @@
         android:layout_marginTop="64dp"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:text=""
+        android:text="v. 0.0"
         android:textAlignment="center"/>
 
     <TextView android:layout_width="wrap_content"
