@@ -28,7 +28,13 @@ class RetrofitNetworkClient(
 
         return withContext(Dispatchers.IO) {
             try {
-                val response = imdbService.searchNames(dto.expression)
+                val response = when (dto) {
+                    is NamesSearchRequest -> imdbService.searchNames(dto.expression)
+                    is MoviesSearchRequest -> imdbService.searchMovies(dto.expression)
+                    is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId)
+                    is MovieCastRequest -> imdbService.getFullCast(dto.movieId)
+                    else -> throw IllegalArgumentException("Unknown request type")
+                }
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
