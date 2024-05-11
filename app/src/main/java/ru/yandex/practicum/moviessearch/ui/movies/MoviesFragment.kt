@@ -17,9 +17,12 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.yandex.practicum.moviessearch.R
 import ru.yandex.practicum.moviessearch.databinding.FragmentMoviesBinding
@@ -27,23 +30,29 @@ import ru.yandex.practicum.moviessearch.domain.models.Movie
 import ru.yandex.practicum.moviessearch.presentation.movies.MoviesState
 import ru.yandex.practicum.moviessearch.presentation.movies.MoviesViewModel
 import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
+import ru.yandex.practicum.moviessearch.ui.root.RootActivity
+import ru.yandex.practicum.moviessearch.util.debounce
 
-    class MoviesFragment : Fragment() {
+class MoviesFragment : Fragment() {
 
-        companion object {
-            private const val CLICK_DEBOUNCE_DELAY = 1000L
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
+
+    private val viewModel by viewModel<MoviesViewModel>()
+
+
+    private val adapter = MoviesAdapter { movie ->
+        if (clickDebounce()) {
+            findNavController().navigate(
+                R.id.action_moviesFragment_to_detailsFragment,
+                DetailsFragment.createArgs(movie.id, movie.image)
+            )
         }
+        (activity as RootActivity).animateBottomNavigationView()
+        onMovieClickDebounce(movie)
+    }
 
-        private val viewModel by viewModel<MoviesViewModel>()
-
-
-        private val adapter = MoviesAdapter { movie ->
-            if (clickDebounce()) {
-                findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment,
-                    DetailsFragment.createArgs(movie.id, movie.image))
-
-            }
-        }
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var binding: FragmentMoviesBinding
@@ -53,8 +62,25 @@ import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
     private lateinit var progressBar: ProgressBar
     private lateinit var textWatcher: TextWatcher
     private var isClickAllowed = true
+    private lateinit var onMovieClickDebounce: (Movie) -> Unit
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentMoviesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,7 +94,8 @@ import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
         progressBar = binding.progressBar
 
         // Здесь пришлось поправить использование Context
-        moviesList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        moviesList.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         moviesList.adapter = adapter
 
         textWatcher = object : TextWatcher {
@@ -95,11 +122,18 @@ import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
         viewModel.observeShowToast().observe(viewLifecycleOwner) {
             showToast(it)
         }
+
+        onMovieClickDebounce = debounce<Movie>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { movie ->
+            findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment,
+                DetailsFragment.createArgs(movie.id, movie.image))
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        textWatcher?.let { queryInput.removeTextChangedListener(it) }
+//        adapter = null
+        moviesList.adapter = null
+        textWatcher?.let { queryInput.removeTextChangedListener(it) } //
     }
 
     private fun showToast(additionalMessage: String?) {
@@ -139,18 +173,8 @@ import ru.yandex.practicum.moviessearch.ui.details.DetailsFragment
         placeholderMessage.visibility = View.GONE
         progressBar.visibility = View.GONE
 
-        adapter.movies.clear()
-        adapter.movies.addAll(movies)
-        adapter.notifyDataSetChanged()
+        adapter?.movies?.clear()
+        adapter?.movies?.addAll(movies)
+        adapter?.notifyDataSetChanged()
     }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
 }

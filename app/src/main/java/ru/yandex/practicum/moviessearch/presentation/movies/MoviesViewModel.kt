@@ -7,19 +7,23 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ru.yandex.practicum.moviessearch.R
 import ru.yandex.practicum.moviessearch.domain.api.MoviesInteractor
 import ru.yandex.practicum.moviessearch.domain.models.Movie
+import ru.yandex.practicum.moviessearch.util.debounce
 
-class MoviesViewModel(private val context: Context,
-                      private val moviesInteractor: MoviesInteractor) : ViewModel() {
+class MoviesViewModel(
+    private val context: Context,
+    private val moviesInteractor: MoviesInteractor
+) : ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
+//        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+//    private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<MoviesState>()
     fun observeState(): LiveData<MoviesState> = stateLiveData
@@ -29,26 +33,20 @@ class MoviesViewModel(private val context: Context,
 
     private var latestSearchText: String? = null
 
+    private val movieSearchDebounce =
+        debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+            searchRequest(changedText)
+        }
+
     override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
+        if (latestSearchText != changedText) {
+            latestSearchText = changedText
+            movieSearchDebounce(changedText)
         }
-
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-        )
     }
 
     private fun searchRequest(newSearchText: String) {
@@ -65,27 +63,28 @@ class MoviesViewModel(private val context: Context,
                     when {
                         errorMessage != null -> {
                             renderState(
-                                    MoviesState.Error(
-                                            message = context.getString(
-                                                    R.string.something_went_wrong),
-                                    )
+                                MoviesState.Error(
+                                    message = context.getString(
+                                        R.string.something_went_wrong
+                                    ),
+                                )
                             )
                             showToast.postValue(errorMessage)
                         }
 
                         movies.isEmpty() -> {
                             renderState(
-                                    MoviesState.Empty(
-                                            message = context.getString(R.string.nothing_found),
-                                    )
+                                MoviesState.Empty(
+                                    message = context.getString(R.string.nothing_found),
+                                )
                             )
                         }
 
                         else -> {
                             renderState(
-                                    MoviesState.Content(
-                                            movies = movies,
-                                    )
+                                MoviesState.Content(
+                                    movies = movies,
+                                )
                             )
                         }
                     }

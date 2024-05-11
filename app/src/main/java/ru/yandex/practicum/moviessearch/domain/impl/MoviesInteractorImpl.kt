@@ -1,5 +1,8 @@
 package ru.yandex.practicum.moviessearch.domain.impl
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.yandex.practicum.moviessearch.domain.api.MoviesInteractor
 import ru.yandex.practicum.moviessearch.domain.api.MoviesRepository
 import ru.yandex.practicum.moviessearch.util.Resource
@@ -10,7 +13,7 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
     private val executor = Executors.newCachedThreadPool()
 
     override fun searchMovies(expression: String, consumer: MoviesInteractor.MoviesConsumer) {
-        executor.execute {
+        CoroutineScope(Dispatchers.IO).launch {
             when(val resource = repository.searchMovies(expression)) {
                 is Resource.Success -> { consumer.consume(resource.data, null) }
                 is Resource.Error -> { consumer.consume(resource.data, resource.message) }
@@ -19,7 +22,7 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
     }
 
     override fun getMoviesDetails(movieId: String, consumer: MoviesInteractor.MovieDetailsConsumer) {
-        executor.execute {
+        CoroutineScope(Dispatchers.IO).launch {
             when(val resource = repository.getMovieDetails(movieId)) {
                 is Resource.Success -> { consumer.consume(resource.data, null) }
                 is Resource.Error -> { consumer.consume(resource.data, resource.message) }
@@ -28,12 +31,11 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
     }
 
     override fun getMovieCast(movieId: String, consumer: MoviesInteractor.MovieCastConsumer) {
-        executor.execute {
+        CoroutineScope(Dispatchers.IO).launch {
             when(val resource = repository.getMovieCast(movieId)) {
                 is Resource.Success -> { consumer.consume(resource.data, null) }
                 is Resource.Error -> { consumer.consume(resource.data, resource.message) }
             }
         }
     }
-
 }
