@@ -18,7 +18,7 @@ class MoviesRepositoryImpl(
     private val movieCastConverter: MovieCastConverter,
 ) : MoviesRepository {
 
-    override fun searchMovies(expression: String): Resource<List<Movie>> {
+    override suspend fun searchMovies(expression: String): Resource<List<Movie>> {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
         return when (response.resultCode) {
             -1 -> {
@@ -37,7 +37,7 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+    override suspend fun getMovieDetails(movieId: String): Resource<MovieDetails> {
         val response = networkClient.doRequest(MovieDetailsRequest(movieId))
         return when (response.resultCode) {
             -1 -> {
@@ -60,7 +60,7 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+    override suspend fun getMovieCast(movieId: String): Resource<MovieCast> {
         val response = networkClient.doRequest(MovieCastRequest(movieId))
         return when (response.resultCode) {
             -1 -> {
