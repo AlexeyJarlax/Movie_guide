@@ -1,13 +1,8 @@
 <resources>
-    <string name="app_name">Movie guide</string>
-
-    <string name="search">Найти</string>
-    <string name="nothing_found">Ничего не найдено</string>
-    <string name="something_went_wrong">Что-то пошло не так</string>
-
+    <string name="app_name">MoviesApp</string>
     <string name="poster">ПОСТЕР</string>
     <string name="details">О ФИЛЬМЕ</string>
-    <string name="rating">Рейтинг IMDB:</string>
+    <string name="rating">Рейтинг IMDb:</string>
     <string name="year">Год:</string>
     <string name="country">Страна:</string>
     <string name="genre">Жанр:</string>
@@ -15,7 +10,11 @@
     <string name="writer">Сценарист:</string>
     <string name="cast">В ролях:</string>
     <string name="plot">Сюжет:</string>
-    <string name="request">Введите запрос...</string>
-    <string name="version">Разработчик\nвообще\nкрасавчик</string>
+    <string name="movies">Movies</string>
+    <string name="persons">Persons</string>
+    <string name="info">Info</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="history">History</string>
 
 </resources>

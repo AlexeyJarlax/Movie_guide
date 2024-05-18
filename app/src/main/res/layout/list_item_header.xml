@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    tools:background="@color/teal_200">
+    tools:background="@color/white">
 
     <TextView
         android:id="@+id/headerTextView"
