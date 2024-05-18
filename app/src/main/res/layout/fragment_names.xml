@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="ru.yandex.practicum.moviessearch.ui.names.NamesFragment">
+    tools:context=".NamesFragment">
 
     <EditText android:id="@+id/queryInput"
         android:layout_width="match_parent"
@@ -26,7 +26,8 @@
             android:indeterminateTint="@color/black"
             android:visibility="gone"/>
 
-        <androidx.recyclerview.widget.RecyclerView android:id="@+id/personsList"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/personsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/list_item_person"/>
